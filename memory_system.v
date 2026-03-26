@@ -10,37 +10,11 @@ module memory_system(
     // data and store into the one selected by
     // addr
     wire [7:0] dataA, dataB, dataC, dataD;
-    wire storeA, storeB, storeC, storeD;
+    wire enable_byte1, enable_byte2, enable_byte3, enable_byte4;
     wire [7:0] memoryA, memoryB, memoryC, memoryD;
 
-  
-    byte_memory byte0(
-      .data(dataA),
-      .store(storeA),
-      .memory(memoryA));
-  
-    byte_memory byte1(
-      .data(dataB),
-      .store(storeB),
-      .memory(memoryB));
-  
-    byte_memory byte2(
-      .data(dataC),
-      .store(storeC),
-      .memory(memoryC));
-  
-    byte_memory byte3(
-      .data(dataD),
-      .store(storeD),
-      .memory(memoryD));
-  
 
-    // It should then multiplex the output of the
-    // memory specified by addr into the memory
-    // output for display on the LEDs
-    // you will need 2 demultiplexers:
-    // 1. Demultiplex data -> selected byte
-    demultiplexer_8_bit data_demux (
+demux data_demux (
       .data(data),
       .sel(addr),
       .A(dataA),
@@ -50,25 +24,57 @@ module memory_system(
     );
 
     // 2. Demultiplex store -> selected byte
-    demultiplexer_1_bit store_demux (
+    demux store_demux (
       .data(store),
       .sel(addr),
-      .A(storeA),
-      .B(storeB),
-      .C(storeC),
-      .D(storeD)
+      .A(enable_byte1),
+      .B(enable_byte2),
+      .C(enable_byte3),
+      .D(enable_byte4)
     );
+    
+  
+    byte_memory byte0(
+      .data(dataA),
+      .store(enable_byte1),
+      .memory(memoryA));
+  
+    byte_memory byte1(
+      .data(dataB),
+      .store(enable_byte2),
+      .memory(memoryB));
+  
+    byte_memory byte2(
+      .data(dataC),
+      .store(enable_byte3),
+      .memory(memoryC));
+  
+    byte_memory byte3(
+      .data(dataD),
+      .store(enable_byte4),
+      .memory(memoryD));
+  
 
+    // It should then multiplex the output of the
+    // memory specified by addr into the memory
+    // output for display on the LEDs
+    // you will need 2 demultiplexers:
+    // 1. Demultiplex data -> selected byte
+    
+
+    wire [7:0] out;
     // and one multiplexer:
     // 1. Multiplex selected byte -> memory
-    multiplexer_8_bit output_mux(
+    mux output_mux(
         .A(memoryA),
         .B(memoryB),
         .C(memoryC),
         .D(memoryD),
         .sel(addr),
-        .Out(memory)
+        .Out(out)
     );
+    
+    assign memory = out;
   
 
 endmodule
