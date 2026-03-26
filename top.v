@@ -5,10 +5,11 @@ module top(
 );
     d_latch part1(
         .D(sw[0]),
+        .E(btnC),
         .Q(led[0]),
-        .NotQ(led[1]),
-        .E(btnC)
+        .NotQ(led[1])
     );
+    
     memory_system part2(
         .data(sw[15:8]),
         .addr(sw[7:6]),

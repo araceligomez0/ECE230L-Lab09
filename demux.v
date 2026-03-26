@@ -1,4 +1,4 @@
-module demultiplexer_8_bit(
+module demux(
     input [7:0] data,
     input [1:0] sel,
     output reg [7:0] A,
